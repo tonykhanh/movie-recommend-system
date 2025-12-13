@@ -15,9 +15,21 @@ Hệ thống gợi ý phim ảnh sử dụng kỹ thuật Content-Based Filterin
 ## 🛠️ Công Nghệ Sử Dụng
 
 *   **Backend:** Python 3, Django
-*   **Machine Learning:** Scikit-learn (Cosine Similarity), Pandas
-*   **Frontend:** HTML, CSS, JavaScript
-*   **Data Source:** The Movie Database (TMDB) API & Pickle datasets
+*   **Machine Learning:** Scikit-learn (CountVectorizer, Cosine Similarity), Pandas
+*   **Frontend:** HTML, CSS, JavaScript (AJAX)
+*   **Data Source:** The Movie Database (TMDB) API & Kaggle Dataset (TMDB 5000 Movie Dataset)
+
+## 🧠 Nguyên Lý Hoạt Động (Algorithm)
+
+Hệ thống sử dụng **Content-Based Filtering** (Lọc dựa trên nội dung) để gợi ý phim.
+
+1.  **Dữ liệu huấn luyện:** Sử dụng bộ dữ liệu `tmdb_5000_movies.csv` và `tmdb_5000_credits.csv`.
+2.  **Trích xuất đặc trưng (Feature Engineering):**
+    *   Tạo ra một trường `tags` duy nhất cho mỗi phim bằng cách kết hợp: `Overview` (mô tả) + `Genres` (thể loại) + `Keywords` (từ khóa) + `Cast` (3 diễn viên chính) + `Crew` (đạo diễn).
+    *   Xử lý văn bản: Loại bỏ khoảng trắng tên riêng (ví dụ: `Tony Khanh` -> `TonyKhanh`) để tạo thành các thực thể duy nhất.
+3.  **Vector hóa (Vectorization):** Sử dụng `CountVectorizer` để chuyển đổi văn bản `tags` thành các vector số học (giới hạn 5000 từ phổ biến nhất, loại bỏ stop-words tiếng Anh).
+4.  **Tính độ tương đồng:** Sử dụng **Cosine Similarity** để tính góc giữa các vector phim. Kết quả là ma trận tương đồng 4805x4805.
+5.  **Gợi ý:** Khi người dùng chọn một phim, hệ thống tìm index của phim đó, tra cứu trong ma trận tương đồng để lấy ra 5 phim có điểm số cao nhất.
 
 ## ⚙️ Cài Đặt & Chạy Dự Án
 
@@ -62,7 +74,7 @@ Truy cập `http://127.0.0.1:8000/` để trải nghiệm.
 ```
 myproject/
 ├── manage.py           # Django management script
-├── create_similarity.py # Script tạo matrix gợi ý
+├── create_similarity.py # Script tạo matrix gợi ý (fallback)
 ├── db.sqlite3          # Database SQLite
 ├── myapp/              # App chính chứa logic
 │   ├── models.py       # Data models & load pickle
@@ -71,6 +83,10 @@ myproject/
 ├── model/              # Chứa file dữ liệu training (.pkl)
 ├── static/             # CSS, JS, Images
 └── templates/          # HTML templates
+Trainning/              # Dữ liệu gốc và Notebook huấn luyện
+├── notebook...ipynb    # Jupyter Notebook phân tích & training
+├── tmdb_..._movies.csv # Dataset Dataset gốc
+└── tmdb_..._credits.csv # Dataset Credits gốc
 ```
 
 ## ⚠️ Lưu ý
