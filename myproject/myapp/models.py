@@ -4,8 +4,27 @@ from django.db import models
 import datetime
 import os
 import pickle
+import pandas as pd
+import sys
 
 # Create your models here.
+# Fix for pandas compatibility with older pickle files
+# Map deprecated pandas classes to new ones for pickle compatibility
+pd.Int64Index = pd.Index
+pd.Float64Index = pd.Index
+pd.UInt64Index = pd.Index
+try:
+    import pandas.core.indexes.numeric as numeric_index
+except ModuleNotFoundError:
+    import pandas as numeric_index
+    sys.modules['pandas.core.indexes.numeric'] = numeric_index
+
+# Also add to _libs for compatibility
+if hasattr(pd, '_libs'):
+    pd._libs.Int64Index = pd.Index
+    pd._libs.Float64Index = pd.Index
+    pd._libs.UInt64Index = pd.Index
+    
 with open('./model/movie_list.pkl', 'rb') as m:
     movies = pickle.load(m)
 with open('./model/similarity.pkl', 'rb') as s:
