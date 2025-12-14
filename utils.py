@@ -3,7 +3,7 @@ import pickle
 import requests
 import sys
 import streamlit as st
-
+ 
 # Fix for pandas compatibility with older pickle files
 pd.Int64Index = pd.Index
 pd.Float64Index = pd.Index
